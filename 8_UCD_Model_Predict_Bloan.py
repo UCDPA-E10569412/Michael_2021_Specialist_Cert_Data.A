@@ -12,6 +12,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import MinMaxScaler
 import pickle
 from pprint import pprint
+from sklearn.ensemble import RandomForestClassifier
 
 #==========================================================
 #Functions
@@ -46,7 +47,8 @@ def scale_data_normalisation(X):
     return scaled
 
 #==========================================================
-#load model from file #https://www.kaggle.com/prmohanty/python-how-to-save-and-load-ml-models
+#load model from file 
+#https://www.kaggle.com/prmohanty/python-how-to-save-and-load-ml-models
 #==========================================================
 
 # Model file name - Modle from current working directory
@@ -129,28 +131,28 @@ X_train = X;X_test = X;y_train = y;y_test = y
 # Reload model using araenters : if you would like to reload model using best parameters
 #==========================================================
 
-# model = RandomForestClassifier(criterion = "gini", 
-#                                        min_samples_leaf = 1, 
-#                                        min_samples_split = 2,   
-#                                        n_estimators=700, 
-#                                        max_features='auto', 
-#                                        oob_score=True, 
-#                                        random_state=1, 
-#                                        n_jobs=-1)
+model = RandomForestClassifier(criterion = "gini", 
+                                        min_samples_leaf = 1, 
+                                        min_samples_split = 2,   
+                                        n_estimators=700, 
+                                        max_features='auto', 
+                                        oob_score=True, 
+                                        random_state=1, 
+                                        n_jobs=-1)
 
-# ##clf.best_params_ {'criterion': 'gini', 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 700}
-# #Check model parameters loaded
-# print('\nConfirm parameters currently in use:\n')
-# pprint(model.get_params())
+##clf.best_params_ {'criterion': 'gini', 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 700}
+#Check model parameters loaded
+print('\nConfirm parameters currently in use:\n')
+pprint(model.get_params())
 
-# #get oob score
-# model.fit(X_train, y_train)
-# print("\nHypertuned - oob score:", round(model.oob_score_, 2)*100, "%")    
+#get oob score
+model.fit(X_train, y_train)
+print("\nHypertuned - oob score:", round(model.oob_score_, 2)*100, "%")    
 
-# #Implement accuracy_score() function on model
-# y_pred = model.predict(X_test)
-# accuracy_test = accuracy_score(y_test, y_pred)
-# print("Accuracy_score() is: ", round(accuracy_test, 3));pause()
+#Implement accuracy_score() function on model
+y_pred = model.predict(X_test)
+accuracy_test = accuracy_score(y_test, y_pred)
+print("Accuracy_score() is: ", round(accuracy_test, 3));pause()
 
 #==========================================================
 #model evaluatiuon
@@ -176,6 +178,11 @@ print("\nThe second row is about the Target-predictions:")
 print("False positives - wrongly classified as Target: ", confusion_matrix_results[1][0])
 print("True positives - correctly classified as Target: " ,confusion_matrix_results[1][1]);pause()
 
+
+
+
+
+
 #Precision and Recall: Our model predicts 81% of the time, a passengers survival correctly (precision). 
 #The recall tells us that it predicted the survival of 73 % of the people who actually survived (Recall).
 from sklearn.metrics import precision_score, recall_score
@@ -183,13 +190,26 @@ print("\nPrecision and Recall results:")
 print("Precision - predicts % of the time, a Target correctly:", round(precision_score(y_train, predictions), 2))
 print("Recall- tells us that it predicted the Target % of the correct:", round(recall_score(y_train, predictions),2))
   
+
+
+
+
+
+
+
 #F-Score: You can combine precision and recall into one score, which is called the F-score. 
 #The F-score is computed with the harmonic mean of precision and recall. 
 #Note that it assigns much more weight to low values. As a result of that, 
 #the classifier will only get a high F-score, if both recall and precision are high.
 from sklearn.metrics import f1_score
 print("\nF1-score - combine precision and recall into one score")
-f1_score(y_train, predictions);pause()
+print(f1_score(y_train, predictions));pause()
+
+
+
+
+
+
 
 # #Understanding model accuracy
 # # from sklearn.metrics import accuracy_score - https://scikit-learn.org/stable/modules/model_evaluation.html
@@ -211,9 +231,18 @@ print("prediction_accuracy:", round(prediction_accuracy,2))
 Num_correct_samples = accuracy_score(y_test, y_pred, normalize=False)
 print("Number of correct results: "+ str(Num_correct_samples) + " of total: " + str(len(y_pred)));pause()
 
+
+
+
+
 #get oob score
 model.fit(X_train, y_train)
 print("\nHypertuned - oob score:", round(model.oob_score_, 2)*100, "%")  ;pause()  
+
+
+
+
+
 
 #Classification report
 from sklearn.metrics import classification_report   
@@ -225,6 +254,13 @@ print(classification_report(y_train, y_pred));pause()
 print("Test scores:")
 y_pred = model.predict(X_test)
 print(classification_report(y_test, y_pred));pause()
+
+
+
+
+
+
+
 
 
 #Precision Recall Curve: For each person the Random Forest algorithm has to classify, 

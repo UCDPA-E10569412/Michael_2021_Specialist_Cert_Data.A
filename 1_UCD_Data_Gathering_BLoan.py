@@ -31,14 +31,15 @@ def create_project_file(A, B, Merge_on):
 #Start of program - import data
 #===============================================================================
 
-#import files for project
+#import file for project
 filename1 = 'loan_bad_ID_Target.csv'
 df_a = import_file(filename1)
 
+#import file for project
 filename2 = 'loan_bad_ID_Features.csv'
 df_b = import_file(filename2)
 
-#create project file
+#create project file and merge on 'ID'
 merge_on = "ID"
 df_merge = create_project_file(df_a, df_b, merge_on)
 
@@ -68,15 +69,16 @@ data.rename(columns={'BAD': 'BAD_LOAN',
 #==========================================================
 
 #create a test and traing dataframe that has not been cleaned
+#use the random function to select random rows and assign to a mask
 msk = np.random.rand(len(data)) < 0.8
 
-#save the test dataframe
+#save the test dataframe - not in mask
 test = data[~msk]
 filename1 = 'S1_test_Loan_Basic_Data_Cleaning.csv'
 test.to_csv(filename1, index=False)
 print("\n>>Saved test data.shape: ", test.shape);print(test.info())
 
-#save the train dataframe
+#save the train dataframe in mask
 train = data[msk]
 filename2 = 'S1_train_Loan_Basic_Data_Cleaning.csv'
 train.to_csv(filename2, index=False)
@@ -84,4 +86,4 @@ print("\n>>Saved train data.shape: ", train.shape);print(train.info())
 
 #Load df from file - used to see how the saved file loads back as I had an issue with index column
 df = pd.read_csv(filename2)
-print("\n<<Loaded dataframe.shape: ", df.shape);print(df.info())#(4776, 14)
+print("\n<<Loaded dataframe.shape: ", df.shape);print(df.info())#(4826, 14)

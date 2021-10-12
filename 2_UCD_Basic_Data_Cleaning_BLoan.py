@@ -163,6 +163,7 @@ print(draw_missing_data_table(df));pause()
 for col in df.columns:
     print("column is "+str(col))
     n = df[col].max()
+    n = n * 10
     df[col].fillna(n, inplace=True)
     print("Filled column["+str(col)+"] with "+str(n))
     

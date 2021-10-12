@@ -129,18 +129,20 @@ print("\nLoaded dataframe has shape: ", df.shape)
 
 #==========================================================
 #Optimised cleaned data - In basic data clean step we imputed the mean for nan, lets that a closer look
-#==================================================3========
+#==========================================================
 
 #Lets look at the unique data to see if there any obovious fixes
 dataframe_unique_check(df)
 
-#Know lets see where they are missing
-print(draw_missing_data_table(df))
-
 # drop column not required
 df.drop(['ID'], axis=1, inplace=True)
 
+#Know lets see where they are missing
+print(draw_missing_data_table(df))
+
+#==========================================================
 # Removing rows with many empty features
+#==========================================================
 
 n = 8#1#8 #we are allowing rows with up to 7 empty cells
 df = df[df.isnull().sum(axis=1) < n]
@@ -238,11 +240,11 @@ for col in list_of_Numeric_Columns:
 
 from sklearn.impute import KNNImputer
 
+df = transform_categorical_variables(df)
+
 # from sklearn.preprocessing import MinMaxScaler
 # scaler = MinMaxScaler()
 # df = pd.DataFrame(scaler.fit_transform(df), columns = df.columns)
-
-df = transform_categorical_variables(df)
 
 imputer = KNNImputer(n_neighbors=9)
 df = pd.DataFrame(imputer.fit_transform(df),columns = df.columns)
