@@ -188,9 +188,9 @@ print("y shape is: ", y.shape);pause()
 
 #Run All classifier model(s) test
 #create a dataframe to capture model performance metrics
-df_model_values = pd.DataFrame(data=None, columns = ['CV', 'Model', 'Model_CVS_Accuracy', 'Model_CVS_STD', 'Accuracy_Score',
-                                                     'Confusion_M_Accuracy','Confusion_True_Neg','Confusion_False_Neg','Confusion_False_Pos',
-                                                     'Confusion_True_Pos'])
+df_model_values = pd.DataFrame(data=None, columns = ['CV', 'Model', 'CVS_Accuracy', 'CVS_STD', 'Accuracy_Score',
+                                                     'C_M_Accuracy','True_Neg','False_Neg','False_Pos',
+                                                     'True_Pos'])
 Kfold_start = 4
 Kfold_Stop  = 11 #fold before thid intiger
 df_model_values = Classifier_models_test(df_model_values, Kfold_start, Kfold_Stop)

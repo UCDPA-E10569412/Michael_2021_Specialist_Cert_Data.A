@@ -145,7 +145,9 @@ print(draw_missing_data_table(df))
 #==========================================================
 
 n = 8#1#8 #we are allowing rows with up to 7 empty cells
+print("\ndataframe before dropping rows: ",df.info())
 df = df[df.isnull().sum(axis=1) < n]
+print("dataframe after dropping rows: ",df.info())
 
 #==========================================================
 # Optimised Data clean - Visual review of data and impute
@@ -160,6 +162,9 @@ column = 'AMOUNT_REQUESTED'; plots_box(column);plots_hist(column)
 #Review the data for LOAN_REASON
 column = 'LOAN_REASON'; plots_hist(column)
 
+#Review the data for LOAN_REASON
+column = 'JOB'; plots_hist(column)
+
 ##Impute columns missing data - less than 5%
 
 # EXIST_PROPERTY_VALUE - approx 2% of data is missing going to apply the mean to the missing data
@@ -169,7 +174,7 @@ plots_box(column);plots_hist(column)
 
 # NO_OF_CR_LINES - approx 4% of data is missing going to apply the mean to the missing data
 NO_OF_CR_LINES = round((df['NO_OF_CR_LINES'].mean()),1); df['NO_OF_CR_LINES'].fillna(NO_OF_CR_LINES, inplace=True)
-column = 'EXIST_PROPERTY_VALUE'
+column = 'NO_OF_CR_LINES'
 plots_box(column);plots_hist(column)
 
 # CR_LINES_AGE(MTS) - approx 5% of data missing so going to apply the mean to the missing data
@@ -190,10 +195,11 @@ column = 'EMPLOYED_YEARS'
 plots_box(column);plots_hist(column)
 #replacing outlier with mean of column
 df['EMPLOYED_YEARS'].replace(9999,EMPLOYED_YEARS,inplace=True)
+plots_box(column);plots_hist(column)
 
 # EXIST_MORTG_DEBT - approx 9% of data missing so going to apply the mean to the missing data
 EXIST_MORTG_DEBT = round((df['EXIST_MORTG_DEBT'].mean()),1); df['EXIST_MORTG_DEBT'].fillna(EXIST_MORTG_DEBT, inplace=True)
-column = 'EMPLOYED_YEARS'
+column = 'EXIST_MORTG_DEBT'
 plots_box(column);plots_hist(column)
 
 # DELINQ_CR_LINES - approx 9% of data missing so going to apply the mean to the missing data
@@ -237,6 +243,7 @@ for col in list_of_Numeric_Columns:
 #========================================================== 
 
 ##Impute columns missing data - approx 25% or less
+#https://scikit-learn.org/stable/modules/generated/sklearn.impute.KNNImputer.html
 
 from sklearn.impute import KNNImputer
 
@@ -246,7 +253,7 @@ df = transform_categorical_variables(df)
 # scaler = MinMaxScaler()
 # df = pd.DataFrame(scaler.fit_transform(df), columns = df.columns)
 
-imputer = KNNImputer(n_neighbors=9)
+imputer = KNNImputer(n_neighbors=4)
 df = pd.DataFrame(imputer.fit_transform(df),columns = df.columns)
 
 ## I just want to see is I can costruct a variable that looks at 
@@ -256,7 +263,15 @@ df = pd.DataFrame(imputer.fit_transform(df),columns = df.columns)
 # 1300	70053	68400
 #BLoan risk
 # Value > Mortgue and Loan < (value - mordue)
+column = "DEBT_TO_INCOME"
+plots_box(column);plots_hist(column)
 
+#Plot to see does KNN-Imputed values change scatter plot in any significant way
+plt.scatter(df[column], df['BAD_LOAN'], alpha=0.5)
+plt.title("Scatter plot of the relationship Bad_Loan to "+ str(col))
+plt.xlabel(str(col))
+plt.ylabel("Bad_Loan")    
+plt.show()
 
     
 #==========================================================

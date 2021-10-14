@@ -4,6 +4,8 @@ Created on Tue Sep 28 20:35:37 2021
 
 @author: Michael Impey
 """
+from sklearn.metrics import confusion_matrix
+from sklearn.model_selection import KFold 
 from numpy import mean
 from numpy import isnan
 from sklearn.model_selection import KFold
@@ -88,42 +90,77 @@ def scale_data_normalisation(X):
     scaler = MinMaxScaler()
     scaled = scaler.fit_transform(X)
     return scaled
-    
+
 def Classifier_models_test(df_model_values, a, b):
+    '''Test data on a number of different classifier algorithims, using KFold CV and save performance data'''
     # get the list of models to consider
     models = get_models()
+    
     # define test conditions
     Kfold_number = range(a,b,1)
+    
     for CV_val in Kfold_number:
-        cv = KFold(n_splits=CV_val, shuffle=True, random_state=42)
+        #https://www.askpython.com/python/examples/k-fold-cross-validation
+        kf = KFold(n_splits=CV_val, shuffle=True, random_state=42)
         # evaluate each model
         for model in models:
             print("\nKfold_number = ", CV_val)
+            
+            #Implementing cross validation and get y_p
+            #https://www.bitdegree.org/learn/train-test-split
+            import sklearn.model_selection as model_selection
+            X_train, X_test, y_train, y_test = model_selection.train_test_split(X, y, train_size=0.7, random_state=CV_val)
+            #Fit model and predict on training data 
+            model.fit(X_train,y_train)
+            y_pred = model.predict(X_test)        
+            
+            
+            ##Test 1 - Accruacy_score
+            #Implement accuracy_score() function          
+            model_accuracy_score= accuracy_score(y_test, y_pred)
+            print("\nAccuracy_score() is: ", round(model_accuracy_score, 3))
+
+                
+                
+            ##Test 2 - Confusion matrix    
+            confusion_matrix_results = confusion_matrix(y_test, y_pred)
+            print("True negatives - correctly classified as not Target: ", confusion_matrix_results[0][0])
+            print("False negatives - wrongly classified as not Target: ",confusion_matrix_results[0][1])
+            print("False positives - wrongly classified as Target: ", confusion_matrix_results[1][0])
+            print("True positives - correctly classified as Target: " ,confusion_matrix_results[1][1])
+            confusion_matric_accuracy = (confusion_matrix_results[0][0]+confusion_matrix_results[1][1])/len(y_pred)
+            #just want to make sure program stops if these couts are dirrenent as it mean my accuracy will not be correct
+            assert len(y_pred)==(confusion_matrix_results[0][0]+confusion_matrix_results[0][1]+confusion_matrix_results[1][0]+confusion_matrix_results[1][1])
+            print("Confusion Matric - Accuracy: " ,confusion_matric_accuracy)              
+
+            
+            ##Test 3 - Coss_Val_Score
             # evaluate model using each test condition on cross_val_score()
-            scores = cross_val_score(model,X,y,scoring='accuracy', cv=cv, n_jobs=None)
+            #https://scikit-learn.org/stable/modules/cross_validation.html
+            scores = cross_val_score(model,X,y,scoring='accuracy', cv=kf, n_jobs=None)
             cv_mean = mean(scores)
             # check for invalid results
             if isnan(cv_mean):
                 continue
-            
             # Model performances
             model_name = type(model).__name__
-            print(str(model_name)+' CV Accuracy: %.3f +/- %.3f' % (np.mean(scores), np.std(scores)))
+            print(str(model_name)+' Cross Val Score - Accuracy: %.3f +/- %.3f' % (np.mean(scores), np.std(scores)))
+
             
-            #Implement accuracy_score() function
-            model.fit(X,y)
-            y_pred = model.predict(X)
-            #Accuracy score on X
-            try:
-                accuracy_train = accuracy_score(y, y_pred)
-                print("Accuracy_score() is: ", round(accuracy_train, 3))
-            except:
-                print("accuracy score is void")
-                accuracy_train = 999
-            df_model_values = df_model_values.append({'CV':CV_val,'Model':str(model_name),'Model_Accuracy':round((np.mean(scores)),3),
-                                                      'Model_STD':round((np.std(scores)),3), 'Accuracy_Score': round(accuracy_train,3)}, ignore_index = True)
-    df_model_values.sort_values(by=['Model_Accuracy'], axis=0, ascending=False, inplace=True, kind='quicksort', na_position='last', ignore_index=False, key=None)
-    df_model_values.to_csv("ML5_Loans_Models_Results_on_Optimised_Data.csv")#use this to see what the data looks like after lateststep
+            #Append data to dataframe to record results
+            df_model_values = df_model_values.append({'CV':CV_val,'Model':str(model_name),
+                                                  'CVS_Accuracy':round((np.mean(scores)),3),
+                                                  'CVS_STD':round((np.std(scores)),3), 
+                                                  'Accuracy_Score':round(model_accuracy_score,3),
+                                                  'C_M_Accuracy':round(confusion_matric_accuracy,2),
+                                                  'True_Neg':confusion_matrix_results[0][0],
+                                                  'False_Neg':confusion_matrix_results[0][1],
+                                                  'False_Pos':confusion_matrix_results[1][0],
+                                                  'True_Pos':confusion_matrix_results[1][1]},ignore_index = True)
+    #Sort the values
+    df_model_values.sort_values(by=['CVS_Accuracy'], axis=0, ascending=False,inplace=True, kind='quicksort',na_position='last',ignore_index=False, key=None)
+    #save the dafatframe to file
+    df_model_values.to_csv("ML5_Loans_Models_Results_on_Basic_Data_Not_Scaled.csv")#use this to see what the data looks like after lateststep
     return df_model_values
    
 #==========================================================
@@ -147,7 +184,7 @@ target_column_name = 'BAD_LOAN'
 X, y = create_X_y_datasets(df, target_column_name)
 
 #rescale X
-X = scale_data_normalisation(X)
+# X = scale_data_normalisation(X)
 
 #check data shapes
 print("\ndf shape was :", df.shape)
@@ -158,8 +195,11 @@ print("y shape is: ", y.shape);pause()
 #Test classifier models
 #==========================================================
 
+#Run All classifier model(s) test
 #create a dataframe to capture model performance metrics
-df_model_values = pd.DataFrame(data=None, columns = ['CV', 'Model', 'Model_Accuracy', 'Model_STD', 'Accuracy_Score'])
+df_model_values = pd.DataFrame(data=None, columns = ['CV', 'Model', 'CVS_Accuracy', 'CVS_STD', 'Accuracy_Score',
+                                                     'C_M_Accuracy','True_Neg','False_Neg','False_Pos',
+                                                     'True_Pos'])
 Kfold_start = 4
 Kfold_Stop  = 11 #fold before thid intiger
 df_model_values = Classifier_models_test(df_model_values, Kfold_start, Kfold_Stop)

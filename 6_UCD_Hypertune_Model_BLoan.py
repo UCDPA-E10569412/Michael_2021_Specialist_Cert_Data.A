@@ -4,6 +4,7 @@ Created on Tue Sep 28 20:35:37 2021
 
 @author: Michael Impey
 """
+from sklearn.metrics import confusion_matrix
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier
@@ -43,28 +44,28 @@ def pause():
     input('===> Press Return to Continue Program ?')  
     
 
-def get_models():
-    ''' get a list of models to evaluate'''
-    models = list()
-    models.append(LogisticRegression())
-    models.append(RidgeClassifier())
-    models.append(SGDClassifier())#
-    models.append(PassiveAggressiveClassifier())
-    models.append(KNeighborsClassifier())
-    models.append(DecisionTreeClassifier())
-    models.append(ExtraTreeClassifier())
-    models.append(LinearSVC())# gives low reading but gives fault
-    models.append(SVC())
-    models.append(GaussianNB())
-    models.append(AdaBoostClassifier())
-    models.append(BaggingClassifier())
-    models.append(RandomForestClassifier())
-    models.append(ExtraTreesClassifier())
-    models.append(GaussianProcessClassifier())
-    models.append(GradientBoostingClassifier())
-    models.append(LinearDiscriminantAnalysis())
-    models.append(QuadraticDiscriminantAnalysis())   
-    return models
+# def get_models():
+#     ''' get a list of models to evaluate'''
+#     models = list()
+#     models.append(LogisticRegression())
+#     models.append(RidgeClassifier())
+#     models.append(SGDClassifier())#
+#     models.append(PassiveAggressiveClassifier())
+#     models.append(KNeighborsClassifier())
+#     models.append(DecisionTreeClassifier())
+#     models.append(ExtraTreeClassifier())
+#     models.append(LinearSVC())# gives low reading but gives fault
+#     models.append(SVC())
+#     models.append(GaussianNB())
+#     models.append(AdaBoostClassifier())
+#     models.append(BaggingClassifier())
+#     models.append(RandomForestClassifier())
+#     models.append(ExtraTreesClassifier())
+#     models.append(GaussianProcessClassifier())
+#     models.append(GradientBoostingClassifier())
+#     models.append(LinearDiscriminantAnalysis())
+#     models.append(QuadraticDiscriminantAnalysis())   
+#     return models
          
 def  transform_categorical_variables(dataframe):
     ''' Transform categorical variables into dummy variables - - known as one-hot encoding of the data. 
@@ -210,6 +211,17 @@ print("\nHypertuned - oob score:", round(model.oob_score_, 2)*100, "%")
 y_pred = model.predict(X_test)
 accuracy_test = accuracy_score(y_test, y_pred)
 print("Accuracy_score() is: ", round(accuracy_test, 3));pause()
+
+#Confusion matrix    
+confusion_matrix_results = confusion_matrix(y_test, y_pred)
+print("True negatives - correctly classified as not Target: ", confusion_matrix_results[0][0])
+print("False negatives - wrongly classified as not Target: ",confusion_matrix_results[0][1])
+print("False positives - wrongly classified as Target: ", confusion_matrix_results[1][0])
+print("True positives - correctly classified as Target: " ,confusion_matrix_results[1][1])
+confusion_matric_accuracy = (confusion_matrix_results[0][0]+confusion_matrix_results[1][1])/len(y_pred)
+#just want to make sure program stops if these couts are dirrenent as it mean my accuracy will not be correct
+assert len(y_pred)==(confusion_matrix_results[0][0]+confusion_matrix_results[0][1]+confusion_matrix_results[1][0]+confusion_matrix_results[1][1])
+print("Confusion Matric - Accuracy: " ,confusion_matric_accuracy)              
 
 #==========================================================
 #Save model to file  # https://www.kaggle.com/prmohanty/python-how-to-save-and-load-ml-models
