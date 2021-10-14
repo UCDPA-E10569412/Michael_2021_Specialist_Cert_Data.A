@@ -85,7 +85,7 @@ filename = 'S7_Loan_Optimised_Data_Cleaning.csv'
 #Load df from file
 # dataFrame from Hyptune used on the model was df shape was : (4694, 18) there we need 18 columns
 df = pd.read_csv(filename)
-print("\n<<Loaded df.shape: ", df.shape)
+print("\n<<Loaded df.shape: ", df.shape);print(df.info());pause()
 
 #==========================================================
 #Pre-Processing

@@ -346,6 +346,9 @@ plt.show()
 #call function to plot and describe important features
 most_important_features(X,y)
 
+#Lets take a final look for missingness
+print(draw_missing_data_table(df))
+
 #==========================================================
 #Save df to file
 #==========================================================

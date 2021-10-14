@@ -42,50 +42,9 @@ from sklearn.model_selection import GridSearchCV
 def pause(): 
     input('===> Press Return to Continue Program ?')  
     
-# # Plot learning curve
-# def plot_learning_curve(estimator, title, X, y, ylim=None, cv=None, n_jobs=1, train_sizes=np.linspace(.1, 1.0, 5)):
-#     plt.figure()
-#     plt.title(title)
-#     if ylim is not None:
-#         plt.ylim(*ylim)
-#     plt.xlabel("Training examples")
-#     plt.ylabel("Score")
-#     train_sizes, train_scores, test_scores = learning_curve(estimator, X, y, cv=cv, n_jobs=n_jobs, train_sizes=train_sizes)
-#     train_scores_mean = np.mean(train_scores, axis=1)
-#     train_scores_std = np.std(train_scores, axis=1)
-#     test_scores_mean = np.mean(test_scores, axis=1)
-#     test_scores_std = np.std(test_scores, axis=1)
-#     plt.grid()
 
-#     plt.fill_between(train_sizes, train_scores_mean - train_scores_std, train_scores_mean + train_scores_std, alpha=0.1, color="r")
-#     plt.fill_between(train_sizes, test_scores_mean - test_scores_std, test_scores_mean + test_scores_std, alpha=0.1, color="g")
-#     plt.plot(train_sizes, train_scores_mean, 'o-', color="r", label="Training score")
-#     plt.plot(train_sizes, test_scores_mean, 'o-', color="g", label="Validation score")
-#     plt.legend(loc="best")
-#     plt.show()
-#     return plt
-
-# # Plot validation curve
-# def plot_validation_curve(estimator, title, X, y, param_name, param_range, ylim=None, cv=None, n_jobs=1, train_sizes=np.linspace(.1, 1.0, 5)):
-#     train_scores, test_scores = validation_curve(estimator, X, y, param_name, param_range, cv)
-#     train_mean = np.mean(train_scores, axis=1)
-#     train_std = np.std(train_scores, axis=1)
-#     test_mean = np.mean(test_scores, axis=1)
-#     test_std = np.std(test_scores, axis=1)
-#     plt.plot(param_range, train_mean, color='r', marker='o', markersize=5, label='Training score')
-#     plt.fill_between(param_range, train_mean + train_std, train_mean - train_std, alpha=0.15, color='r')
-#     plt.plot(param_range, test_mean, color='g', linestyle='--', marker='s', markersize=5, label='Validation score')
-#     plt.fill_between(param_range, test_mean + test_std, test_mean - test_std, alpha=0.15, color='g')
-#     plt.grid() 
-#     plt.xscale('log')
-#     plt.legend(loc='best') 
-#     plt.xlabel('Parameter') 
-#     plt.ylabel('Score') 
-#     plt.ylim(ylim)
-#     plt.show()
-        
-# get a list of models to evaluate
 def get_models():
+    ''' get a list of models to evaluate'''
     models = list()
     models.append(LogisticRegression())
     models.append(RidgeClassifier())
@@ -143,30 +102,28 @@ print("\n<<Loaded dataframe shape: ", df.shape)
 #==========================================================
 #Pre-Processing
 #==========================================================
+
+#transform Categorical data to Numeric 
+df = transform_categorical_variables(df)#giving a problem with ticket - text and numeric
+
 # Create data set to train data 
 target_column_name = 'BAD_LOAN'
 X = df[df.loc[:, df.columns != target_column_name].columns]
 y = df[target_column_name]
 
-#transform Categorical data to Numeric 
-df = transform_categorical_variables(df)#giving a problem with ticket - text and numeric
-
 # Create datasets for model
 X, y = create_X_y_datasets(df, target_column_name)
 
 #rescale X
-# X = scale_data_normalisation(X) # not sure if required for randonm forest
+X = scale_data_normalisation(X) # not sure if required for randonm forest
 
 #Split data in to test and train - create cross validateing test and train data sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.7, random_state=42)
 
 #check shape of ML data
 print("\ndf shape was :", df.shape)
 print("X shape is :", X.shape)
 print("y shape is: ", y.shape)
-
-# Split data
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42) 
 
 #check shapes of Train and Test data
 print("\nX_train.shape: ",X_train.shape)

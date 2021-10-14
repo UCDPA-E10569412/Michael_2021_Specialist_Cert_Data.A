@@ -46,6 +46,7 @@ def pause():
 # get a list of models to evaluate
 def get_models():
     models = list()
+    models.append(RandomForestClassifier())
     models.append(LogisticRegression())
     models.append(RidgeClassifier())
     models.append(SGDClassifier())#
@@ -58,7 +59,6 @@ def get_models():
     models.append(GaussianNB())
     models.append(AdaBoostClassifier())
     models.append(BaggingClassifier())
-    models.append(RandomForestClassifier())
     models.append(ExtraTreesClassifier())
     models.append(GaussianProcessClassifier())
     models.append(GradientBoostingClassifier())
@@ -179,7 +179,7 @@ target_column_name = 'BAD_LOAN'
 X, y = create_X_y_datasets(df, target_column_name)
 
 #rescale X between 0 - 1
-X = scale_data_normalisation(X)
+# X = scale_data_normalisation(X)
 
 #check data shapes
 print("\ndf shape was :", df.shape)
@@ -188,9 +188,9 @@ print("y shape is: ", y.shape);pause()
 
 #Run All classifier model(s) test
 #create a dataframe to capture model performance metrics
-df_model_values = pd.DataFrame(data=None, columns = ['CV', 'Model', 'Model_CVS_Accuracy', 'Model_CVS_STD', 'Accuracy_Score',
-                                                     'Confusion_M_Accuracy','Confusion_True_Neg','Confusion_False_Neg','Confusion_False_Pos',
-                                                     'Confusion_True_Pos'])
+df_model_values = pd.DataFrame(data=None, columns = ['CV', 'Model', 'CVS_Accuracy', 'CVS_STD', 'Accuracy_Score',
+                                                     'C_M_Accuracy','True_Neg','False_Neg','False_Pos',
+                                                     'True_Pos'])
 Kfold_start = 4
 Kfold_Stop  = 11 #fold before thid intiger
 df_model_values = Classifier_models_test(df_model_values, Kfold_start, Kfold_Stop)
