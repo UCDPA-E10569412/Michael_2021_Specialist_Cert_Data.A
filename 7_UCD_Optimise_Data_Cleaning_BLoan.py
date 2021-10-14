@@ -220,7 +220,7 @@ plots_box(column);plots_hist(column)
 
 # NO_OF_CR_LINES - approx 4% of data is missing going to apply the mean to the missing data
 NO_OF_CR_LINES = round((df['NO_OF_CR_LINES'].mean()),1); df['NO_OF_CR_LINES'].fillna(NO_OF_CR_LINES, inplace=True)
-column = 'EXIST_PROPERTY_VALUE'
+column = 'NO_OF_CR_LINES'
 plots_box(column);plots_hist(column)
 
 # CR_LINES_AGE(MTS) - approx 5% of data missing so going to apply the mean to the missing data
@@ -239,12 +239,11 @@ plots_box(column);plots_hist(column)
 EMPLOYED_YEARS = round((df['EMPLOYED_YEARS'].mean()),1); df['EMPLOYED_YEARS'].fillna(EMPLOYED_YEARS, inplace=True)
 column = 'EMPLOYED_YEARS'
 plots_box(column);plots_hist(column)
-#replacing outlier with mean of column
-df['EMPLOYED_YEARS'].replace(9999,EMPLOYED_YEARS,inplace=True)
+
 
 # EXIST_MORTG_DEBT - approx 9% of data missing so going to apply the mean to the missing data
 EXIST_MORTG_DEBT = round((df['EXIST_MORTG_DEBT'].mean()),1); df['EXIST_MORTG_DEBT'].fillna(EXIST_MORTG_DEBT, inplace=True)
-column = 'EMPLOYED_YEARS'
+column = 'EXIST_MORTG_DEBT'
 plots_box(column);plots_hist(column)
 
 # DELINQ_CR_LINES - approx 9% of data missing so going to apply the mean to the missing data

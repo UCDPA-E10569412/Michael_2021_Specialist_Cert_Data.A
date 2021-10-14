@@ -109,14 +109,14 @@ df = transform_categorical_variables(df)#giving a problem with ticket - text and
 
 # Create data set to train data 
 target_column_name = 'BAD_LOAN'
-X = df[df.loc[:, df.columns != target_column_name].columns]
-y = df[target_column_name]
+# X = df[df.loc[:, df.columns != target_column_name].columns]
+# y = df[target_column_name]
 
 # Create datasets for model
 X, y = create_X_y_datasets(df, target_column_name)
 
 #rescale X
-X = scale_data_normalisation(X) # not sure if required for randonm forest
+# X = scale_data_normalisation(X) # not sure if required for randonm forest
 
 #Split data in to test and train - create cross validateing test and train data sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.7, random_state=42)
@@ -138,16 +138,16 @@ print("y_test.shape: ", y_test.shape);pause()
 
 print("\nHyperparameter Tuning:")    
 
-param_grid = { "criterion" : ["gini", "entropy"], 
-              "min_samples_leaf" : [1, 5, 10, 25, 50, 70], 
-              "min_samples_split" : [2, 4, 10, 12, 16, 18, 25, 35], 
-              "n_estimators": [100, 400, 700, 1000, 1500]}
-
-# ##for quick testing as Hyptuning can take along time to complete
 # param_grid = { "criterion" : ["gini", "entropy"], 
-#               "min_samples_leaf" : [1], 
-#               "min_samples_split" : [2], 
-#               "n_estimators": [100]}
+#               "min_samples_leaf" : [1, 5, 10, 25, 50, 70], 
+#               "min_samples_split" : [2, 4, 10, 12, 16, 18, 25, 35], 
+#               "n_estimators": [100, 400, 700, 1000, 1500]}
+
+##for quick testing as Hyptuning can take along time to complete
+param_grid = { "criterion" : ["gini", "entropy"], 
+              "min_samples_leaf" : [1], 
+              "min_samples_split" : [2], 
+              "n_estimators": [700]}
 
 # Complete GRID search with various parameters to find best parameters
 model = RandomForestClassifier( oob_score=True, random_state=1, n_jobs=-1)#n_estimators=100, max_features='auto',
@@ -169,7 +169,17 @@ model_filename = "6_Best_Model_Params.pkl"
 
 with open(model_filename, 'wb') as file:  
     pickle.dump(clf.best_params_, file)
+    
+#==========================================================
+#Save model to file  # https://www.kaggle.com/prmohanty/python-how-to-save-and-load-ml-models
+#==========================================================
 
+# Save the Modle to file in the current working directory
+model_filename = "6_Loan_UCD_ML_Model.pkl"  
+
+with open(model_filename, 'wb') as file:  
+    pickle.dump(clf, file)
+       
 #=================================================
 # Perfom Classification Report after Hypertuning
 #=================================================
@@ -223,16 +233,4 @@ confusion_matric_accuracy = (confusion_matrix_results[0][0]+confusion_matrix_res
 assert len(y_pred)==(confusion_matrix_results[0][0]+confusion_matrix_results[0][1]+confusion_matrix_results[1][0]+confusion_matrix_results[1][1])
 print("Confusion Matric - Accuracy: " ,confusion_matric_accuracy)              
 
-#==========================================================
-#Save model to file  # https://www.kaggle.com/prmohanty/python-how-to-save-and-load-ml-models
-#==========================================================
-
-# Import pickle Package
-import pickle
-
-# Save the Modle to file in the current working directory
-model_filename = "6_Loan_UCD_ML_Model.pkl"  
-
-with open(model_filename, 'wb') as file:  
-    pickle.dump(model, file)
 
