@@ -1,2 +1,0 @@
-,CV,Model,CVS_Accuracy,CVS_STD,Accuracy_Score,C_M_Accuracy,True_Neg,False_Neg,False_Pos,True_Pos
-0,5,RandomForestClassifier,0.912,0.008,0.901,0.9,1130,11,130,156
